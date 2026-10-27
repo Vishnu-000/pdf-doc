@@ -1,10 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.api.jobs import router as jobs_router
 import os
 
 app = FastAPI(
     title="PDF-Doc Backend",
-    version="1.0.0",
+    version="2.0.0",
     description="Backend service and asynchronous worker API for PDF-Doc toolkit."
 )
 
@@ -17,13 +18,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(jobs_router)
+
 @app.get("/")
 def read_root():
     return {
         "service": "PDF-Doc API",
         "status": "online",
-        "version": "1.0.0",
-        "mode": "Phase 1: Client-Side Toolkit Ready"
+        "version": "2.0.0",
+        "mode": "Phase 2: Hybrid Client & Server Worker Suite Ready"
     }
 
 @app.get("/api/health")

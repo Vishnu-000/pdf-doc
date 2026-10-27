@@ -3,12 +3,12 @@
 📦 **GitHub Repository:** [https://github.com/Vishnu-000/pdf-doc](https://github.com/Vishnu-000/pdf-doc)  
 📋 **Implementation & Roadmap Tracker:** See [PROGRESS.md](PROGRESS.md) for full phase breakdown, test matrices, and roadmap.
 
-> **Current Status (Phase 1):** ✅ **10/10 Client-Side Tools Complete**  
-> All 10 tools operate 100% in the user's browser with zero server uploads or storage.
+> **Current Status:** 🚀 **Phase 2 In Progress — 14 Active Tools**  
+> 10 Pure Client-Side Tools + 4 Hybrid/Server Tools (Compress, Sign, Protect, Unlock) and FastAPI Job Queue.
 
 ---
 
-**PDF-Doc** is a professional, privacy-first, all-in-one PDF utility suite inspired by iLovePDF's intuitive UX. In **Phase 1**, all document processing operations execute **100% in the client's browser** using `pdf-lib` and `pdf.js` — your sensitive documents never touch a remote server.
+**PDF-Doc** is a professional, privacy-first, all-in-one PDF utility suite inspired by iLovePDF's intuitive UX. Document processing operations prioritize **client-side in-browser execution** using `pdf-lib` and `pdf.js`, complemented by a high-throughput **FastAPI + RQ asynchronous jobs engine** for advanced operations.
 
 ## 🚀 Key Highlights & Architecture
 
@@ -18,8 +18,8 @@
   2. **Workspace & Options:** Interactive page thumbnail grid (with drag-and-drop reordering, rotation, deletion, duplication) and a dedicated parameter sidebar.
   3. **Progress:** Deterministic real-time progress bar.
   4. **Result:** Success banner, download button with custom filenames, and file size statistics.
-- **100% Client-Side Privacy:** Zero server uploads for Phase 1 client tools.
-- **Future-Ready Backend:** Pre-scaffolded FastAPI service, Redis connection, and RQ task queue ready for Phase 2/3 server-side conversions, OCR, and compression jobs.
+- **Client-Side Privacy:** In-browser execution for organizing, editing, signing, and lightweight compression.
+- **Asynchronous Jobs API:** FastAPI `/api/jobs` pipeline with Redis queue for heavy server compression, repair, and encryption tasks.
 
 ---
 
@@ -27,26 +27,29 @@
 
 - **Frontend:** React 19 + TypeScript + Vite + Tailwind CSS v3
 - **PDF Engines:** `pdf-lib` (PDF manipulation, merging, splitting, drawing, image embedding) + `pdfjs-dist` (canvas thumbnail rendering & PDF to JPG) + `jszip` (batch exports)
-- **Backend Scaffold:** FastAPI (Python 3.12) + Uvicorn
-- **Task Queue & Cache:** Redis 7 + RQ Worker
+- **Backend API & Queue:** FastAPI (Python 3.12) + Uvicorn + `pypdf` + Redis 7 + RQ Worker
 - **Orchestration:** Docker Compose
 
 ---
 
-## 📂 Phase 1 Active Client Tools
+## 📂 Active Tools Catalog (14 Tools)
 
-| Tool | Category | Features |
-| :--- | :--- | :--- |
-| **Merge PDF** | Organize PDF | Drag-and-drop multi-file ordering, merge into a single PDF |
-| **Split PDF** | Organize PDF | Split by custom page ranges or extract all pages into a ZIP archive |
-| **Remove Pages** | Organize PDF | Visual page selection grid; click pages to delete |
-| **Extract Pages** | Organize PDF | Visual thumbnail selection; export as one PDF or separate PDFs in a ZIP |
-| **Organize PDF** | Organize PDF | Drag-and-drop thumbnail reordering, per-page rotation, page duplication & deletion |
-| **Rotate PDF** | Edit PDF | Rotate 90°, 180°, or 270° clockwise / counter-clockwise across all or custom pages |
-| **Page Numbers** | Edit PDF | Add page numbers with 6 placement anchors, customizable typography, and formats |
-| **Add Watermark** | Edit PDF | Add text watermarks with custom rotation angle (-90° to 90°), opacity, font size, and color |
-| **JPG to PDF** | Convert to PDF | Convert JPG, PNG, and WebP images with orientation (Portrait/Landscape/Auto), page sizes (A4, Letter, Fit), and margins |
-| **PDF to JPG** | Convert from PDF | Render PDF pages to high-res JPG or PNG (150 or 300 DPI); download as image or ZIP |
+| Tool | Category | Mode | Features |
+| :--- | :--- | :---: | :--- |
+| **Merge PDF** | Organize PDF | Client | Drag-and-drop multi-file ordering, merge into a single PDF |
+| **Split PDF** | Organize PDF | Client | Split by custom page ranges or extract all pages into a ZIP archive |
+| **Remove Pages** | Organize PDF | Client | Visual page selection grid; click pages to delete |
+| **Extract Pages** | Organize PDF | Client | Visual thumbnail selection; export as one PDF or separate PDFs in a ZIP |
+| **Organize PDF** | Organize PDF | Client | Drag-and-drop thumbnail reordering, per-page rotation, page duplication & deletion |
+| **Rotate PDF** | Edit PDF | Client | Rotate 90°, 180°, or 270° clockwise / counter-clockwise across all or custom pages |
+| **Page Numbers** | Edit PDF | Client | Add page numbers with 6 placement anchors, customizable typography, and formats |
+| **Add Watermark** | Edit PDF | Client | Add text watermarks with custom rotation angle (-90° to 90°), opacity, font size, and color |
+| **JPG to PDF** | Convert to PDF | Client | Convert JPG, PNG, and WebP images with orientation, page sizes, and margins |
+| **PDF to JPG** | Convert from PDF | Client | Render PDF pages to high-res JPG or PNG (150 or 300 DPI); download as image or ZIP |
+| **Compress PDF** | Optimize PDF | Client/Server | 3 compression presets (*Extreme*, *Recommended*, *Low*) with file size telemetry |
+| **Sign PDF** | Edit PDF | Client | Draw, Type, or Upload digital signature with interactive positioning and page targeting |
+| **Protect PDF** | PDF Security | Server | Industry standard AES-256 document password encryption |
+| **Unlock PDF** | PDF Security | Server | Decrypt and remove password restrictions from protected documents |
 
 ---
 

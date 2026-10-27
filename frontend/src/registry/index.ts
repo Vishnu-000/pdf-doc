@@ -42,6 +42,23 @@ import { pdfToJpgMetadata } from '../tools/pdf-to-jpg/metadata';
 import { executePdfToJpg } from '../tools/pdf-to-jpg/logic';
 import { PdfToJpgComponent } from '../tools/pdf-to-jpg/Component';
 
+// Phase 2 Tools
+import { compressMetadata } from '../tools/compress/metadata';
+import { executeCompress } from '../tools/compress/logic';
+import { CompressComponent } from '../tools/compress/Component';
+
+import { signMetadata } from '../tools/sign/metadata';
+import { executeSign } from '../tools/sign/logic';
+import { SignComponent } from '../tools/sign/Component';
+
+import { protectMetadata } from '../tools/protect/metadata';
+import { executeProtect } from '../tools/protect/logic';
+import { ProtectComponent } from '../tools/protect/Component';
+
+import { unlockMetadata } from '../tools/unlock/metadata';
+import { executeUnlock } from '../tools/unlock/logic';
+import { UnlockComponent } from '../tools/unlock/Component';
+
 export interface ActiveToolDefinition {
   metadata: ToolMetadata;
   execute: (...args: any[]) => Promise<any>;
@@ -49,7 +66,7 @@ export interface ActiveToolDefinition {
   defaultOptions?: any;
 }
 
-// 10 active Phase 1 client tools
+// Active client and hybrid tools (Phase 1 + Phase 2)
 export const ACTIVE_TOOLS: Record<string, ActiveToolDefinition> = {
   'merge-pdf': {
     metadata: mergeMetadata,
@@ -131,6 +148,35 @@ export const ACTIVE_TOOLS: Record<string, ActiveToolDefinition> = {
       quality: 'normal',
     },
   },
+  'compress-pdf': {
+    metadata: compressMetadata,
+    execute: executeCompress,
+    Component: CompressComponent,
+    defaultOptions: { level: 'recommended' },
+  },
+  'sign-pdf': {
+    metadata: signMetadata,
+    execute: executeSign,
+    Component: SignComponent,
+    defaultOptions: {
+      position: 'bottom-right',
+      pageNumber: 1,
+      signatureWidth: 160,
+      signatureHeight: 60,
+    },
+  },
+  'protect-pdf': {
+    metadata: protectMetadata,
+    execute: executeProtect,
+    Component: ProtectComponent,
+    defaultOptions: { password: '', confirmPassword: '' },
+  },
+  'unlock-pdf': {
+    metadata: unlockMetadata,
+    execute: executeUnlock,
+    Component: UnlockComponent,
+    defaultOptions: { password: '' },
+  },
 };
 
 // Complete catalog including future roadmap tools across all 7 categories
@@ -145,6 +191,7 @@ export const ALL_TOOLS_METADATA: ToolMetadata[] = [
   rotateMetadata,
   pageNumbersMetadata,
   watermarkMetadata,
+  signMetadata,
   // Convert to PDF
   jpgToPdfMetadata,
   {
@@ -183,18 +230,7 @@ export const ALL_TOOLS_METADATA: ToolMetadata[] = [
     popular: true,
   },
   // Optimize PDF
-  {
-    id: 'compress-pdf',
-    name: 'Compress PDF',
-    category: 'Optimize PDF',
-    description: 'Reduce PDF file size while maintaining the highest visual quality.',
-    iconName: 'Zap',
-    mode: 'server',
-    badge: 'Popular',
-    acceptedTypes: ['application/pdf'],
-    allowMultiple: false,
-    popular: true,
-  },
+  compressMetadata,
   {
     id: 'repair-pdf',
     name: 'Repair PDF',
@@ -206,26 +242,8 @@ export const ALL_TOOLS_METADATA: ToolMetadata[] = [
     allowMultiple: false,
   },
   // PDF Security
-  {
-    id: 'protect-pdf',
-    name: 'Protect PDF',
-    category: 'PDF Security',
-    description: 'Encrypt your PDF file with strong password and permissions.',
-    iconName: 'Lock',
-    mode: 'server',
-    acceptedTypes: ['application/pdf'],
-    allowMultiple: false,
-  },
-  {
-    id: 'unlock-pdf',
-    name: 'Unlock PDF',
-    category: 'PDF Security',
-    description: 'Remove password and permissions security from your PDF file.',
-    iconName: 'Unlock',
-    mode: 'server',
-    acceptedTypes: ['application/pdf'],
-    allowMultiple: false,
-  },
+  protectMetadata,
+  unlockMetadata,
   // PDF Intelligence
   {
     id: 'ocr-pdf',

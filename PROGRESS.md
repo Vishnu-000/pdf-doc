@@ -9,12 +9,12 @@ This document tracks the progress, completed milestones, technical decisions, an
 | Item | Details |
 | :--- | :--- |
 | **Product Name** | **PDF-Doc** |
-| **Current Stage** | **Phase 1 Complete (Client-Side Suite Ready)** |
+| **Current Stage** | **Phase 2 In Progress (14 Active Tools: 10 Client + 4 Hybrid/Server)** |
 | **GitHub Repository** | **[https://github.com/Vishnu-000/pdf-doc](https://github.com/Vishnu-000/pdf-doc)** |
 | **Local Dev URL** | `http://localhost:3000/` |
-| **Backend API** | `http://localhost:8000/` (FastAPI + Swagger Docs at `/docs`) |
-| **Unit Test Coverage** | **15 tests passing** across all 10 tools (Vitest) |
-| **Client Privacy** | **100% In-Browser Execution** (Zero server storage or uploads for client tools) |
+| **Backend API** | `http://localhost:8000/` (FastAPI + Swagger Docs at `/docs`, Jobs API at `/api/jobs`) |
+| **Unit Test Coverage** | **19 tests passing** across 14 test suites (Vitest) |
+| **Client Privacy** | **In-Browser Execution** (Client compression, drawing, and page ops without cloud dependency) |
 
 ---
 
@@ -57,31 +57,31 @@ This document tracks the progress, completed milestones, technical decisions, an
 
 ---
 
-## 🔮 Phase 2: Server-Side Processing & Optimization (Upcoming)
+## 🚀 Phase 2: Optimization, Security & Jobs Pipeline (Active)
 
-The backend structure and RQ queue are already scaffolded. Phase 2 will introduce asynchronous server tasks for heavier workflows:
+### 1. Optimize & Edit Tools
+- [x] **Compress PDF (`compress-pdf`):** In-browser canvas re-sampling + stream deflating with 3 compression levels (*Extreme*, *Recommended*, *Low*). Backend fallback in `compress_pdf_task`.
+- [x] **Sign PDF (`sign-pdf`):** Multi-mode signature creator (Draw with stroke smoothing, Type with cursive font, Upload PNG/JPG) with visual positioning (bottom-right, bottom-left, center) and page targeting.
+- [ ] **Repair PDF:** Recovery engine for corrupted PDF xref tables and stream objects (`repair_pdf_task` scaffolded).
 
-### 1. Optimize PDF
-- [ ] **Compress PDF:** Ghostscript / `qpdf` compression with quality presets (*Extreme*, *Recommended*, *Low Compression*).
-- [ ] **Repair PDF:** Recovery engine for corrupted PDF xref tables and stream objects.
+### 2. PDF Security
+- [x] **Protect PDF (`protect-pdf`):** Password encryption with confirmation check, standard AES-256 backend job handling.
+- [x] **Unlock PDF (`unlock-pdf`):** Decrypts password-protected PDF files, strips restrictions for uninhibited reading and printing.
 
-### 2. Office Document Conversions (LibreOffice / Pandoc)
+### 3. Background Job Infrastructure
+- [x] Asynchronous job submission endpoint (`/api/jobs/submit`).
+- [x] Job status and polling endpoint (`/api/jobs/{id}/status`).
+- [x] Secure processed artifact download endpoint (`/api/jobs/{id}/download`).
+- [x] Worker tasks: `compress_pdf_task`, `protect_pdf_task`, `unlock_pdf_task`, `repair_pdf_task` via `pypdf`.
+- [ ] Automatic file cleanup cron (deleting temporary job directories after expiration).
+
+### 4. Office Document Conversions (Roadmap)
 - [ ] **Word to PDF:** Convert `.doc` and `.docx` to standard PDF.
 - [ ] **Excel to PDF:** Convert `.xls` and `.xlsx` spreadsheets to formatted PDF pages.
 - [ ] **PowerPoint to PDF:** Convert `.ppt` and `.pptx` presentations to PDF.
 - [ ] **PDF to Word:** Convert PDF into editable `.docx` using `pdf2docx`.
 - [ ] **PDF to Excel:** Extract tabular data into structured `.xlsx` workbooks.
 - [ ] **PDF to PowerPoint:** Convert PDF slides into `.pptx`.
-
-### 3. PDF Security & Signing
-- [ ] **Protect PDF:** AES-256 password encryption and permission constraints (disable print, copy).
-- [ ] **Unlock PDF:** Decrypt password-protected files upon key verification.
-- [ ] **Sign PDF:** Visual digital signature placement and certificate stamping.
-
-### 4. Background Job Infrastructure
-- [ ] Chunked file upload endpoint with progress tracking (`/api/jobs/upload`).
-- [ ] Job status polling and server-sent events (SSE) (`/api/jobs/{id}/status`).
-- [ ] Automatic file cleanup cron (deleting temporary files after 1 hour).
 
 ---
 
