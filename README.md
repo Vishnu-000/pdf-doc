@@ -3,8 +3,8 @@
 📦 **GitHub Repository:** [https://github.com/Vishnu-000/pdf-doc](https://github.com/Vishnu-000/pdf-doc)  
 📋 **Implementation & Roadmap Tracker:** See [PROGRESS.md](PROGRESS.md) for full phase breakdown, test matrices, and roadmap.
 
-> **Current Status:** 🚀 **Phase 2 In Progress — 14 Active Tools**  
-> 10 Pure Client-Side Tools + 4 Hybrid/Server Tools (Compress, Sign, Protect, Unlock) and FastAPI Job Queue.
+> **Current Status:** 🚀 **Phase 2 Complete + Phase 3 Active — 16 Active Tools**  
+> 12 Pure Client-Side Tools + 4 Hybrid/Server Tools (Compress, Sign, Protect, Unlock, Repair, AI Document Chat) and FastAPI Job Queue.
 
 ---
 
@@ -18,21 +18,21 @@
   2. **Workspace & Options:** Interactive page thumbnail grid (with drag-and-drop reordering, rotation, deletion, duplication) and a dedicated parameter sidebar.
   3. **Progress:** Deterministic real-time progress bar.
   4. **Result:** Success banner, download button with custom filenames, and file size statistics.
-- **Client-Side Privacy:** In-browser execution for organizing, editing, signing, and lightweight compression.
-- **Asynchronous Jobs API:** FastAPI `/api/jobs` pipeline with Redis queue for heavy server compression, repair, and encryption tasks.
+- **Client-Side Privacy:** In-browser execution for organizing, editing, signing, lightweight compression, document repair, and document intelligence.
+- **Asynchronous Jobs API:** FastAPI `/api/jobs` pipeline with Redis queue for heavy server compression, repair, and encryption tasks, featuring automated file expiration cleanup.
 
 ---
 
 ## 🛠️ Tech Stack
 
 - **Frontend:** React 19 + TypeScript + Vite + Tailwind CSS v3
-- **PDF Engines:** `pdf-lib` (PDF manipulation, merging, splitting, drawing, image embedding) + `pdfjs-dist` (canvas thumbnail rendering & PDF to JPG) + `jszip` (batch exports)
+- **PDF Engines:** `pdf-lib` (PDF manipulation, merging, splitting, drawing, image embedding, report generation) + `pdfjs-dist` (canvas thumbnail rendering, PDF to JPG, and in-browser text extraction) + `jszip` (batch exports)
 - **Backend API & Queue:** FastAPI (Python 3.12) + Uvicorn + `pypdf` + Redis 7 + RQ Worker
 - **Orchestration:** Docker Compose
 
 ---
 
-## 📂 Active Tools Catalog (14 Tools)
+## 📂 Active Tools Catalog (16 Tools)
 
 | Tool | Category | Mode | Features |
 | :--- | :--- | :---: | :--- |
@@ -50,6 +50,8 @@
 | **Sign PDF** | Edit PDF | Client | Draw, Type, or Upload digital signature with interactive positioning and page targeting |
 | **Protect PDF** | PDF Security | Server | Industry standard AES-256 document password encryption |
 | **Unlock PDF** | PDF Security | Server | Decrypt and remove password restrictions from protected documents |
+| **Repair PDF** | Optimize PDF | Client/Server | Dual-tier recovery: standard xref/trailer rebuild + deep visual stream reconstruction |
+| **AI Document Chat** | PDF Intelligence | Client | Statistical text analysis, executive summary, key findings, and interactive Q&A citations |
 
 ---
 

@@ -59,6 +59,14 @@ import { unlockMetadata } from '../tools/unlock/metadata';
 import { executeUnlock } from '../tools/unlock/logic';
 import { UnlockComponent } from '../tools/unlock/Component';
 
+import { repairMetadata } from '../tools/repair/metadata';
+import { executeRepair } from '../tools/repair/logic';
+import { RepairComponent } from '../tools/repair/Component';
+
+import { aiSummaryMetadata } from '../tools/ai-summary/metadata';
+import { executeAiSummary } from '../tools/ai-summary/logic';
+import { AiSummaryComponent } from '../tools/ai-summary/Component';
+
 export interface ActiveToolDefinition {
   metadata: ToolMetadata;
   execute: (...args: any[]) => Promise<any>;
@@ -177,6 +185,18 @@ export const ACTIVE_TOOLS: Record<string, ActiveToolDefinition> = {
     Component: UnlockComponent,
     defaultOptions: { password: '' },
   },
+  'repair-pdf': {
+    metadata: repairMetadata,
+    execute: executeRepair,
+    Component: RepairComponent,
+    defaultOptions: { mode: 'standard' },
+  },
+  'ai-summary': {
+    metadata: aiSummaryMetadata,
+    execute: executeAiSummary,
+    Component: AiSummaryComponent,
+    defaultOptions: { mode: 'executive', userQuestion: '' },
+  },
 };
 
 // Complete catalog including future roadmap tools across all 7 categories
@@ -231,16 +251,7 @@ export const ALL_TOOLS_METADATA: ToolMetadata[] = [
   },
   // Optimize PDF
   compressMetadata,
-  {
-    id: 'repair-pdf',
-    name: 'Repair PDF',
-    category: 'Optimize PDF',
-    description: 'Recover data and repair corrupted or damaged PDF files.',
-    iconName: 'Wrench',
-    mode: 'server',
-    acceptedTypes: ['application/pdf'],
-    allowMultiple: false,
-  },
+  repairMetadata,
   // PDF Security
   protectMetadata,
   unlockMetadata,
@@ -256,17 +267,7 @@ export const ALL_TOOLS_METADATA: ToolMetadata[] = [
     acceptedTypes: ['application/pdf'],
     allowMultiple: false,
   },
-  {
-    id: 'ai-summary',
-    name: 'AI Document Chat',
-    category: 'PDF Intelligence',
-    description: 'Summarize key points, ask questions, and chat with your documents.',
-    iconName: 'Sparkles',
-    mode: 'server',
-    badge: 'New',
-    acceptedTypes: ['application/pdf'],
-    allowMultiple: false,
-  },
+  aiSummaryMetadata,
 ];
 
 export function getToolMetadata(id: string): ToolMetadata | undefined {

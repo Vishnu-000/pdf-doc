@@ -2,7 +2,8 @@ import os
 import uuid
 import json
 import shutil
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException
+import time
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException, BackgroundTasks
 from fastapi.responses import FileResponse
 from app.workers.tasks import (
     compress_pdf_task,
@@ -19,12 +20,41 @@ os.makedirs(STORAGE_DIR, exist_ok=True)
 # In-memory job registry for local/lightweight fallback
 JOBS_STORE = {}
 
+def cleanup_expired_jobs(max_age_seconds: int = 3600):
+    """
+    Deletes temporary job storage directories older than max_age_seconds (default 1 hour).
+    Prevents storage leaks and clears stale job registry entries.
+    """
+    now = time.time()
+    try:
+        if os.path.exists(STORAGE_DIR):
+            for entry in os.listdir(STORAGE_DIR):
+                entry_path = os.path.join(STORAGE_DIR, entry)
+                if os.path.isdir(entry_path):
+                    try:
+                        mtime = os.path.getmtime(entry_path)
+                        if now - mtime > max_age_seconds:
+                            shutil.rmtree(entry_path, ignore_errors=True)
+                            if entry in JOBS_STORE:
+                                del JOBS_STORE[entry]
+                    except Exception:
+                        pass
+    except Exception:
+        pass
+
 @router.post("/submit")
 async def submit_job(
     file: UploadFile = File(...),
     action: str = Form(...),  # 'compress', 'protect', 'unlock', 'repair'
     options: str = Form("{}"),
+    background_tasks: BackgroundTasks = None,
 ):
+    # Trigger background cleanup of expired jobs
+    if background_tasks:
+        background_tasks.add_task(cleanup_expired_jobs)
+    else:
+        cleanup_expired_jobs()
+
     job_id = str(uuid.uuid4())
     job_dir = os.path.join(STORAGE_DIR, job_id)
     os.makedirs(job_dir, exist_ok=True)

@@ -113,3 +113,32 @@ export async function renderAllThumbnails(
 
   return thumbnails;
 }
+
+/**
+ * Extracts raw textual content page by page from a PDF
+ */
+export async function extractPdfText(
+  arrayBuffer: ArrayBuffer,
+  onProgress?: (current: number, total: number) => void
+): Promise<{ pageNumber: number; text: string }[]> {
+  const doc = await loadPdfDocument(arrayBuffer);
+  const total = doc.numPages;
+  const pages: { pageNumber: number; text: string }[] = [];
+
+  for (let i = 1; i <= total; i++) {
+    const page = await doc.getPage(i);
+    const content = await page.getTextContent();
+    const pageText = content.items
+      .map((item: any) => (item.str !== undefined ? item.str : ''))
+      .join(' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    pages.push({ pageNumber: i, text: pageText });
+    if (onProgress) {
+      onProgress(i, total);
+    }
+  }
+
+  return pages;
+}
