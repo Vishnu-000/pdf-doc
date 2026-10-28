@@ -27,6 +27,7 @@ export const Header: React.FC<HeaderProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
+  const megaMenuButtonRef = useRef<HTMLButtonElement>(null);
 
   const searchResults = searchQuery.trim() ? searchTools(searchQuery) : [];
 
@@ -70,19 +71,20 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Mega Menu Toggle */}
             <div className="relative">
               <button
+                ref={megaMenuButtonRef}
                 type="button"
-                onClick={() => setIsMegaMenuOpen(!isMegaMenuOpen)}
+                onClick={() => setIsMegaMenuOpen((prev) => !prev)}
                 className={`hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                   isMegaMenuOpen
-                    ? 'bg-brand-50 text-brand-700'
+                    ? 'bg-brand-50 text-brand-700 shadow-xs'
                     : 'text-slate-700 hover:text-brand-600 hover:bg-slate-50'
                 }`}
               >
                 <span>All PDF Tools</span>
                 <ChevronDown
                   size={14}
-                  className={`transition-transform duration-200 ${
-                    isMegaMenuOpen ? 'rotate-180 text-brand-600' : 'text-slate-400'
+                  className={`transition-transform duration-200 transform ${
+                    isMegaMenuOpen ? 'rotate-180 text-brand-600' : 'rotate-0 text-slate-400'
                   }`}
                 />
               </button>
@@ -219,6 +221,7 @@ export const Header: React.FC<HeaderProps> = ({
         isOpen={isMegaMenuOpen}
         onClose={() => setIsMegaMenuOpen(false)}
         onSelectTool={onSelectTool}
+        toggleButtonRef={megaMenuButtonRef}
       />
     </header>
   );

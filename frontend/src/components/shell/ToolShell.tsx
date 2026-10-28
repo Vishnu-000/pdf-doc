@@ -10,6 +10,7 @@ import { PageGrid } from '../common/PageGrid';
 import { ProgressBar } from '../common/ProgressBar';
 import { downloadBlob, formatBytes } from '../../lib/file-utils';
 import { Icon } from '../common/Icon';
+import { AiSummaryWorkspace } from '../../tools/ai-summary/Workspace';
 import {
   Download,
   RotateCcw,
@@ -256,13 +257,24 @@ export const ToolShell: React.FC<ToolShellProps> = ({
               </div>
             )}
 
-            {/* Single file tools (Rotate, Numbers, Watermark, Split, PDF to JPG) */}
+            {/* AI Document Chat dedicated interactive intelligence workspace */}
+            {metadata.id === 'ai-summary' && files.length > 0 && (
+              <AiSummaryWorkspace
+                file={files[0]}
+                options={options}
+                setOptions={setOptions}
+                onReset={handleStartOver}
+              />
+            )}
+
+            {/* Standard single file tools (Rotate, Numbers, Watermark, Split, PDF to JPG, Compress, Repair, Protect, Unlock) */}
             {![
               'merge-pdf',
               'jpg-to-pdf',
               'organize-pdf',
               'remove-pages',
               'extract-pages',
+              'ai-summary',
             ].includes(metadata.id) &&
               files.length > 0 && (
                 <div className="space-y-4">

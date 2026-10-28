@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { renderAllThumbnails, RenderedPageThumbnail } from '../../lib/pdf-renderer';
+import { renderAllThumbnails, RenderedPageThumbnail, getPdfPageCount } from '../../lib/pdf-renderer';
 import { readFileAsArrayBuffer } from '../../lib/file-utils';
 import { PageOrderItem } from '../../tools/organize/logic';
 import {
   RotateCw,
   Trash2,
   Copy,
-  CheckCircle2,
+  Check,
   Loader2,
   GripVertical,
 } from 'lucide-react';
@@ -33,6 +33,7 @@ export const PageGrid: React.FC<PageGridProps> = ({
   selectionBadgeText,
 }) => {
   const [thumbnails, setThumbnails] = useState<Record<number, string>>({});
+  const [totalPages, setTotalPages] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [progressText, setProgressText] = useState<string>('Loading PDF...');
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -44,6 +45,11 @@ export const PageGrid: React.FC<PageGridProps> = ({
       try {
         setLoading(true);
         const buffer = await readFileAsArrayBuffer(file);
+        const count = await getPdfPageCount(buffer);
+        if (isMounted) {
+          setTotalPages(count);
+        }
+
         const thumbs = await renderAllThumbnails(buffer, 0.4, (cur, total) => {
           if (isMounted) {
             setProgressText(`Rendering page ${cur} of ${total}...`);
@@ -230,10 +236,52 @@ export const PageGrid: React.FC<PageGridProps> = ({
     );
   }
 
-  // Selection mode (Remove Pages or Extract Pages)
-  const totalOriginalPages = Object.keys(thumbnails).length;
-  const pageNumbers = Array.from({ length: totalOriginalPages }, (_, i) => i + 1);
+  const count = totalPages || Object.keys(thumbnails).length || 1;
+  const pageNumbers = Array.from({ length: count }, (_, i) => i + 1);
 
+  // Preview mode (clean, non-selectable thumbnails without bogus checkmarks)
+  if (mode === 'preview') {
+    return (
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        {pageNumbers.map((pageNum) => {
+          const pageIndex = pageNum - 1;
+          const thumbUrl = thumbnails[pageIndex];
+
+          return (
+            <div
+              key={pageNum}
+              className="relative bg-white rounded-xl border border-slate-200 p-2 flex flex-col items-center select-none shadow-xs hover:shadow-sm transition-all"
+            >
+              {/* Thumbnail */}
+              <div className="w-full aspect-[1/1.4] bg-slate-100 rounded-lg overflow-hidden flex items-center justify-center p-1.5 border border-slate-100">
+                {thumbUrl ? (
+                  <img
+                    src={thumbUrl}
+                    alt={`Page ${pageNum}`}
+                    className="max-w-full max-h-full object-contain pointer-events-none shadow-xs rounded"
+                  />
+                ) : (
+                  <span className="text-xs text-slate-400 font-medium">Page {pageNum}</span>
+                )}
+              </div>
+
+              {/* Bottom Info */}
+              <div className="w-full flex items-center justify-between mt-2 px-1">
+                <span className="text-xs font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">
+                  Page {pageNum}
+                </span>
+                <span className="text-[10px] text-slate-400 font-medium">
+                  {pageNum} of {count}
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+
+  // Selection mode (Remove Pages or Extract Pages)
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
       {pageNumbers.map((pageNum) => {
@@ -246,21 +294,21 @@ export const PageGrid: React.FC<PageGridProps> = ({
           <div
             key={pageNum}
             onClick={() => onTogglePage && onTogglePage(pageNum)}
-            className={`relative bg-white rounded-xl border p-2 flex flex-col items-center cursor-pointer transition-all duration-200 select-none ${
+            className={`group relative bg-white rounded-xl border p-2 flex flex-col items-center cursor-pointer transition-all duration-200 select-none ${
               isSelected
-                ? 'border-brand-500 ring-2 ring-brand-500/30 shadow-md'
-                : 'border-slate-200 hover:border-slate-300 shadow-sm opacity-90'
+                ? 'border-brand-500 ring-2 ring-brand-500/30 shadow-md bg-brand-50/10'
+                : 'border-slate-200 hover:border-slate-300 shadow-sm opacity-90 hover:opacity-100'
             }`}
           >
-            {/* Selection Checkmark */}
+            {/* Selection Checkbox */}
             <div
-              className={`absolute top-3 right-3 w-6 h-6 rounded-full flex items-center justify-center transition-all ${
+              className={`absolute top-3 right-3 w-6 h-6 rounded-full flex items-center justify-center transition-all z-10 ${
                 isSelected
-                  ? 'bg-brand-600 text-white shadow-sm'
-                  : 'bg-white/80 border border-slate-300 text-transparent hover:border-brand-400'
+                  ? 'bg-brand-600 text-white shadow-md ring-2 ring-white scale-105'
+                  : 'bg-white/95 border-2 border-slate-300 group-hover:border-brand-500 group-hover:bg-brand-50/60 shadow-xs'
               }`}
             >
-              <CheckCircle2 size={16} />
+              {isSelected && <Check size={14} strokeWidth={3} />}
             </div>
 
             {/* Thumbnail */}
@@ -281,7 +329,7 @@ export const PageGrid: React.FC<PageGridProps> = ({
               <span className="text-xs font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">
                 Page {pageNum}
               </span>
-              {badge && (
+              {badge && isSelected && (
                 <span className="text-[11px] font-semibold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">
                   {badge}
                 </span>

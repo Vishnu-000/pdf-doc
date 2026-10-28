@@ -1,5 +1,6 @@
 import React from 'react';
 import { RemovePagesOptions } from './logic';
+import { parsePageRange } from '../../lib/file-utils';
 
 interface RemovePagesProps {
   options: RemovePagesOptions;
@@ -21,9 +22,15 @@ export const RemovePagesComponent: React.FC<RemovePagesProps> = ({
         <input
           type="text"
           value={options.rangeString || ''}
-          onChange={(e) =>
-            setOptions((prev) => ({ ...prev, rangeString: e.target.value }))
-          }
+          onChange={(e) => {
+            const val = e.target.value;
+            const parsed = parsePageRange(val, 9999);
+            setOptions((prev) => ({
+              ...prev,
+              rangeString: val,
+              pagesToRemove: parsed,
+            }));
+          }}
           placeholder="e.g. 2, 4-6, 9"
           disabled={disabled}
           className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 placeholder-slate-400"

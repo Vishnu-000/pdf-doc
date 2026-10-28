@@ -8,37 +8,55 @@ interface MegaMenuProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectTool: (toolId: string) => void;
+  toggleButtonRef?: React.RefObject<HTMLButtonElement | null>;
 }
 
 export const MegaMenu: React.FC<MegaMenuProps> = ({
   isOpen,
   onClose,
   onSelectTool,
+  toggleButtonRef,
 }) => {
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+      // Do nothing if click is inside the mega menu
+      if (menuRef.current && menuRef.current.contains(target)) {
+        return;
+      }
+      // Do nothing if click is on the toggle button (the button's own onClick handles toggling)
+      if (toggleButtonRef?.current && toggleButtonRef.current.contains(target)) {
+        return;
+      }
+      onClose();
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
         onClose();
       }
     }
+
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleKeyDown);
     }
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, toggleButtonRef]);
 
   if (!isOpen) return null;
 
   return (
-    <div className="absolute top-full left-0 w-full bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xl z-50 animate-fade-in">
-      <div
-        ref={menuRef}
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
-      >
+    <div
+      ref={menuRef}
+      className="absolute top-full left-0 w-full bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xl z-50 animate-fade-in"
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {CATEGORY_LIST.map((category) => {
             const tools = getToolsByCategory(category.name);

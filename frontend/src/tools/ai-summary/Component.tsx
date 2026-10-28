@@ -99,9 +99,24 @@ export const AiSummaryComponent: React.FC<AiSummaryProps> = ({
           />
           <MessageSquare size={14} className="absolute left-3 top-3 text-slate-400" />
         </div>
-        <p className="text-[11px] text-slate-500 mt-1">
-          Our intelligent text retrieval engine will locate the most relevant passage and cite the page.
-        </p>
+
+        <div className="flex flex-wrap gap-1.5 mt-2">
+          {[
+            'What are the key conclusions?',
+            'List all metrics & numbers',
+            'What are the action items?',
+          ].map((prompt) => (
+            <button
+              key={prompt}
+              type="button"
+              disabled={disabled}
+              onClick={() => setOptions((prev) => ({ ...prev, userQuestion: prompt }))}
+              className="text-[10px] font-medium px-2 py-1 bg-slate-100 hover:bg-brand-50 hover:text-brand-700 text-slate-600 rounded-lg transition-colors border border-slate-200"
+            >
+              {prompt}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="rounded-xl bg-purple-50/60 border border-purple-200 p-3 text-xs text-purple-900 flex items-start gap-2">

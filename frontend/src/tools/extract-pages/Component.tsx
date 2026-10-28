@@ -1,5 +1,6 @@
 import React from 'react';
 import { ExtractPagesOptions } from './logic';
+import { parsePageRange } from '../../lib/file-utils';
 
 interface ExtractPagesProps {
   options: ExtractPagesOptions;
@@ -55,9 +56,15 @@ export const ExtractPagesComponent: React.FC<ExtractPagesProps> = ({
         <input
           type="text"
           value={options.rangeString || ''}
-          onChange={(e) =>
-            setOptions((prev) => ({ ...prev, rangeString: e.target.value }))
-          }
+          onChange={(e) => {
+            const val = e.target.value;
+            const parsed = parsePageRange(val, 9999);
+            setOptions((prev) => ({
+              ...prev,
+              rangeString: val,
+              selectedPages: parsed,
+            }));
+          }}
           placeholder="e.g. 1-3, 5, 7"
           disabled={disabled}
           className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 placeholder-slate-400"
