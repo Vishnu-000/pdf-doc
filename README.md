@@ -1,10 +1,12 @@
 # PDF-Doc — Modern Web-Based PDF Toolkit
 
 📦 **GitHub Repository:** [https://github.com/Vishnu-000/pdf-doc](https://github.com/Vishnu-000/pdf-doc)  
+🌐 **Live Web Application:** [https://pdf-doc-8a5d7.web.app](https://pdf-doc-8a5d7.web.app)  
 📋 **Implementation & Roadmap Tracker:** See [PROGRESS.md](PROGRESS.md) for full phase breakdown, test matrices, and roadmap.
 
 > **Current Status:** 🚀 **Phase 2 Complete + Phase 3 Active — 16 Active Tools**  
-> 12 Pure Client-Side Tools + 4 Hybrid/Server Tools (Compress, Sign, Protect, Unlock, Repair, AI Document Chat) and FastAPI Job Queue.
+> 12 Pure Client-Side Tools + 4 Hybrid/Server Tools (Compress, Sign, Protect, Unlock, Repair, AI Document Intelligence) and FastAPI Job Queue.  
+> 🧪 **25 Unit Tests Passing** across 16 test suites with Vitest.
 
 ---
 
@@ -18,17 +20,26 @@
   2. **Workspace & Options:** Interactive page thumbnail grid (with drag-and-drop reordering, rotation, deletion, duplication) and a dedicated parameter sidebar.
   3. **Progress:** Deterministic real-time progress bar.
   4. **Result:** Success banner, download button with custom filenames, and file size statistics.
-- **Client-Side Privacy:** In-browser execution for organizing, editing, signing, lightweight compression, document repair, and document intelligence.
-- **Asynchronous Jobs API:** FastAPI `/api/jobs` pipeline with Redis queue for heavy server compression, repair, and encryption tasks, featuring automated file expiration cleanup.
+- **Client-Side Privacy:** In-browser execution for organizing, editing, signing, lightweight compression, document repair, and document intelligence. Zero document uploads required for all client tools.
+- **AI Document Intelligence Engine:** In-browser text extraction with 3 distinct analytical pipelines:
+  - **Executive Briefing:** High-level narrative, Document DNA metrics, and strategic takeaways.
+  - **Verified Findings & Metrics:** Cited takeaways (`[Page X]`), quantitative figures table (`$`, `%`, ratios, dates), and actionable obligations.
+  - **Comprehensive Digest:** Page-by-page section breakdown, domain terminology glossary, and full structured digest.
+  - **Interactive Q&A:** Semantic search citations with relevance scoring and downloadable tailored PDF reports.
+- **Polished UI/UX Design System:** 
+  - Dynamic MegaMenu catalog with robust click-outside handling and keyboard accessibility (`Escape`).
+  - Decoupled `PageGrid` modes (clean thumbnails in `preview` mode vs. high-visibility `<Check>` indicators in `select` mode).
+  - Synchronized typed page-range inputs (`1-3, 5`) with visual grid selection.
+- **Asynchronous Jobs API:** FastAPI `/api/jobs` pipeline with Redis queue for heavy server compression, repair, and encryption tasks, featuring automated file expiration cleanup (background task purging jobs older than 1 hour).
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Frontend:** React 19 + TypeScript + Vite + Tailwind CSS v3
+- **Frontend:** React 19 + TypeScript + Vite + Tailwind CSS v3.4
 - **PDF Engines:** `pdf-lib` (PDF manipulation, merging, splitting, drawing, image embedding, report generation) + `pdfjs-dist` (canvas thumbnail rendering, PDF to JPG, and in-browser text extraction) + `jszip` (batch exports)
 - **Backend API & Queue:** FastAPI (Python 3.12) + Uvicorn + `pypdf` + Redis 7 + RQ Worker
-- **Orchestration:** Docker Compose
+- **Hosting & Deployment:** Firebase Hosting (`https://pdf-doc-8a5d7.web.app`) + Docker Compose
 
 ---
 
@@ -38,8 +49,8 @@
 | :--- | :--- | :---: | :--- |
 | **Merge PDF** | Organize PDF | Client | Drag-and-drop multi-file ordering, merge into a single PDF |
 | **Split PDF** | Organize PDF | Client | Split by custom page ranges or extract all pages into a ZIP archive |
-| **Remove Pages** | Organize PDF | Client | Visual page selection grid; click pages to delete |
-| **Extract Pages** | Organize PDF | Client | Visual thumbnail selection; export as one PDF or separate PDFs in a ZIP |
+| **Remove Pages** | Organize PDF | Client | Visual page selection grid; click pages to delete; synchronized range inputs |
+| **Extract Pages** | Organize PDF | Client | Visual thumbnail selection; export as one PDF or separate PDFs in a ZIP; synchronized range inputs |
 | **Organize PDF** | Organize PDF | Client | Drag-and-drop thumbnail reordering, per-page rotation, page duplication & deletion |
 | **Rotate PDF** | Edit PDF | Client | Rotate 90°, 180°, or 270° clockwise / counter-clockwise across all or custom pages |
 | **Page Numbers** | Edit PDF | Client | Add page numbers with 6 placement anchors, customizable typography, and formats |
@@ -51,7 +62,7 @@
 | **Protect PDF** | PDF Security | Server | Industry standard AES-256 document password encryption |
 | **Unlock PDF** | PDF Security | Server | Decrypt and remove password restrictions from protected documents |
 | **Repair PDF** | Optimize PDF | Client/Server | Dual-tier recovery: standard xref/trailer rebuild + deep visual stream reconstruction |
-| **AI Document Chat** | PDF Intelligence | Client | Statistical text analysis, executive summary, key findings, and interactive Q&A citations |
+| **AI Document Chat** | PDF Intelligence | Client | Executive Briefing, Verified Findings & Metrics, Comprehensive Digest, and Q&A citations with PDF report export |
 
 ---
 
@@ -141,7 +152,7 @@ Pdf-Doc-Tool/
     │   │   ├── layout/            # Header, MegaMenu, Footer
     │   │   └── shell/             # ToolShell 4-step wizard
     │   ├── registry/              # Central registry & category definitions
-    │   ├── tools/                 # Self-contained tool modules
+    │   ├── tools/                 # Self-contained tool modules (16 active tools)
     │   │   ├── merge/             # metadata, logic, logic.test, Component
     │   │   ├── split/
     │   │   ├── remove-pages/
@@ -151,7 +162,13 @@ Pdf-Doc-Tool/
     │   │   ├── page-numbers/
     │   │   ├── watermark/
     │   │   ├── jpg-to-pdf/
-    │   │   └── pdf-to-jpg/
+    │   │   ├── pdf-to-jpg/
+    │   │   ├── compress/
+    │   │   ├── sign/
+    │   │   ├── protect/
+    │   │   ├── unlock/
+    │   │   ├── repair/
+    │   │   └── ai-summary/
     │   ├── lib/                   # pdf-renderer, zip-utils, file-utils
     │   ├── pages/                 # HomePage, ToolPage
     │   └── App.tsx                # Client hash router & state
@@ -160,5 +177,22 @@ Pdf-Doc-Tool/
 
 ---
 
+## 🌐 Deployment & Live Site
+
+The frontend application is continuously deployed to **Firebase Hosting**:
+- **Live URL:** [https://pdf-doc-8a5d7.web.app](https://pdf-doc-8a5d7.web.app)
+- **Firebase Project:** `pdf-doc-8a5d7`
+
+To deploy updates manually:
+```bash
+cd frontend
+npm run build
+firebase deploy --only hosting
+```
+
+*(Note: Custom domains such as `pdf-doc.web.app` or custom company domains can be connected anytime via Firebase Console > Hosting > Custom Domain).*
+
+---
+
 ## 🔒 Privacy & Security
-All Phase 1 PDF modifications are performed strictly in the user's browser memory using WebAssembly and Web Workers. No file content is logged, analyzed, or sent over the internet.
+All client-side PDF operations and AI intelligence analyses are performed directly within the user's browser memory using WebAssembly and Web Workers. No file content is logged, analyzed, or sent to external servers for any client-side tool.
